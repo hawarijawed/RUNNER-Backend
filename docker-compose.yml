@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: runner-container_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: runner_db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
