@@ -2,28 +2,15 @@ package project.runner.DTOs;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.*;
 import lombok.Data;
-import lombok.NonNull;
 import project.runner.models.enumerates.Roles;
 
 @Data
-public class CreateUserDTO {
-
-    @NotBlank
+public class UserResponse {
+    private Long id;
     private String name;
-    @NotBlank
-    @Email
     private String email;
-
-    @NotBlank
-    @Size(min = 10, max = 10)
     private String contact;
-    @NotBlank
-    @NotNull
-    @Min(6)
-    private String password;
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Roles role;
 }
