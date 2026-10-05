@@ -14,8 +14,7 @@ public class DeliveryHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "delivery_id")
-    @Column(nullable = false)
+    @JoinColumn(name = "delivery_id", nullable = false)
     private Delivery delivery;
 
     @Enumerated( EnumType.STRING)

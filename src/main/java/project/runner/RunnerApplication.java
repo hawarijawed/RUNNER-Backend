@@ -12,6 +12,4 @@ public class RunnerApplication {
 		System.out.println("Hello there...");
 	}
 
-
-
 }

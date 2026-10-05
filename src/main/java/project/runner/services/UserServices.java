@@ -3,6 +3,8 @@ package project.runner.services;
 import org.springframework.stereotype.Service;
 import project.runner.DTOs.CreateUserDTO;
 import project.runner.DTOs.UserResponse;
+import project.runner.exceptions.EmailAlreadyExistsException;
+import project.runner.exceptions.UserNotFoundException;
 import project.runner.models.User;
 import project.runner.repositories.UserRepositories;
 
@@ -22,7 +24,7 @@ public class UserServices {
     //Create new user
     public UserResponse createNewUser(CreateUserDTO createUserDTO){
         if(userRepositories.existsByEmail(createUserDTO.getEmail())){
-            throw new RuntimeException("Email ID already exists in database");
+            throw new EmailAlreadyExistsException("Email ID already exists in database");
         }
 
         User user = new User();
@@ -40,14 +42,14 @@ public class UserServices {
 
     public UserResponse findById(Long id){
         User user = userRepositories.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return mapToUser(user);
     }
 
     public UserResponse findByEmail(String email){
         User user = userRepositories.findByEmail(email).orElseThrow(
-                ()-> new RuntimeException("User does not exist with this email")
+                ()-> new UserNotFoundException("User does not exist with this email")
         );
 
         return mapToUser(user);
