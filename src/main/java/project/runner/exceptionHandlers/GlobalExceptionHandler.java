@@ -104,4 +104,40 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(SellerProfileAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleSellerProfileAlreadyExists(
+            SellerProfileAlreadyExistsException msg,
+            HttpServletRequest req
+    ){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                msg.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(SellerProfileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSellerNotFoundException(
+            SellerProfileNotFoundException msg,
+            HttpServletRequest req
+    ){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                msg.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(errorResponse);
+    }
+
 }
