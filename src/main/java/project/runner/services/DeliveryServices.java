@@ -140,6 +140,75 @@ public class DeliveryServices {
         deliveryRepository.save(delivery);
         return mapToDelivery(delivery);
     }
+
+    public DeliveryResponseDTO getDeliveryById(Long deliveryId){
+        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(
+                ()-> new DeliveryNotFoundException("Delivery not found for given id")
+        );
+
+        return mapToDelivery(delivery);
+    }
+
+    public List<DeliveryResponseDTO> getAvailableDeliveries(){
+        List<Delivery> deliveryList = deliveryRepository.findByStatus(DeliveryStatus.REQUESTED);
+        List<DeliveryResponseDTO> deliveryResponseDTOList = new ArrayList<>();
+        for(Delivery delivery: deliveryList){
+            deliveryResponseDTOList.add(mapToDelivery(delivery));
+        }
+        return deliveryResponseDTOList;
+    }
+
+    //DeliveryHistory will be integrated later
+    @Transactional
+    public DeliveryResponseDTO markedAsPickedUp(Long userId, Long deliveryId){
+        RunnerProfile runnerProfile = runnerProfileRepository.findByUserId(userId).orElseThrow(
+                () -> new RunnerProfileNotFoundException("Runner not found for given user id")
+        );
+
+        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(
+                () -> new DeliveryNotFoundException("Delivery not found for given id")
+        );
+
+        if(delivery.getRunner() == null || !runnerProfile.getId().equals(delivery.getRunner().getId())){
+            throw new UnauthorizedDeliveryActionException("Unauthorized action performed by runner");
+        }
+
+        if(delivery.getStatus() != DeliveryStatus.MATCHED){
+            throw new InvalidDeliveryStatusException("Only Matched deliveries can be marked as Picked up");
+        }
+
+        delivery.setStatus(DeliveryStatus.PICKED_UP);
+        deliveryRepository.save(delivery);
+        return mapToDelivery(delivery);
+    }
+
+    @Transactional
+    public DeliveryResponseDTO markedAsDelivered(Long userId, Long deliveryId){
+        RunnerProfile runnerProfile = runnerProfileRepository.findByUserId(userId).orElseThrow(
+                () -> new RunnerProfileNotFoundException("Runner not found for given user id")
+        );
+
+        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(
+                () -> new DeliveryNotFoundException("Delivery not found for given id")
+        );
+
+        //verify the runner id with delivery id
+        if(delivery.getRunner() == null || !runnerProfile.getId().equals(delivery.getRunner().getId())){
+            throw new UnauthorizedDeliveryActionException("You are not authorized to complete this delivery");
+        }
+
+        //Status changes only if delivery.status = PICKED_UP
+        if(delivery.getStatus() != DeliveryStatus.PICKED_UP){
+            throw new InvalidDeliveryStatusException("Only deliveries with status = PICKED UP can be marked as DELIVERED");
+        }
+
+        delivery.setStatus(DeliveryStatus.DELIVERED);
+        deliveryRepository.save(delivery);
+
+        runnerProfile.setTotalDeliveries(runnerProfile.getTotalDeliveries() + 1);
+        runnerProfileRepository.save(runnerProfile);
+        return mapToDelivery(delivery);
+    }
     private DeliveryResponseDTO mapToDelivery(Delivery delivery){
         DeliveryResponseDTO deliveryResponseDTO = new DeliveryResponseDTO();
 

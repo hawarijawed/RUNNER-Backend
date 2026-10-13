@@ -207,4 +207,20 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(InvalidDeliveryStatusException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDeliveryStatus(
+            InvalidDeliveryStatusException msg,
+            HttpServletRequest req
+    ){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                msg.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
 }
