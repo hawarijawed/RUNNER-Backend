@@ -2,9 +2,11 @@ package project.runner.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import project.runner.models.enumerates.DeliveryStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -49,6 +51,10 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DeliveryStatus status = DeliveryStatus.REQUESTED;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Version
     private Long version;

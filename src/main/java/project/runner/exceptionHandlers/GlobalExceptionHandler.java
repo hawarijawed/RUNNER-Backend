@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import project.runner.DTOs.DeliveryAcceptDTO;
 import project.runner.DTOs.ErrorResponse;
 import project.runner.exceptions.*;
 
@@ -137,6 +138,72 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(DeliveryAlreadyAcceptedException.class)
+    public ResponseEntity<ErrorResponse> handleDeliveryAcceptedException(
+            DeliveryAlreadyAcceptedException msg,
+            HttpServletRequest req
+    ){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                msg.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(DeliveryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDeliveryNotFoundException(
+            DeliveryNotFoundException msg,
+            HttpServletRequest req
+    ){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                msg.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(DeliveryCancellationNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> handleDeliveryCancellationException(
+            DeliveryCancellationNotAllowedException msg,
+            HttpServletRequest req
+    ){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                msg.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(UnauthorizedDeliveryActionException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedDeliveryAction(
+            UnauthorizedDeliveryActionException msg,
+            HttpServletRequest req
+    ){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                msg.getMessage(),
+                req.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(errorResponse);
     }
 
