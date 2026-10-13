@@ -88,6 +88,23 @@ public class DeliveryServices {
         return deliveryResponseDTOList;
     }
 
+    public DeliveryResponseDTO getDeliveryById(Long deliveryId){
+        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(
+                ()-> new DeliveryNotFoundException("Delivery not found for given id")
+        );
+
+        return mapToDelivery(delivery);
+    }
+
+    public List<DeliveryResponseDTO> getAvailableDeliveries(){
+        List<Delivery> deliveryList = deliveryRepository.findByStatus(DeliveryStatus.REQUESTED);
+        List<DeliveryResponseDTO> deliveryResponseDTOList = new ArrayList<>();
+        for(Delivery delivery: deliveryList){
+            deliveryResponseDTOList.add(mapToDelivery(delivery));
+        }
+        return deliveryResponseDTOList;
+    }
+
     //accept delivery by runner
     //TOPIC FOR DISCUSSION
     @Transactional
@@ -139,23 +156,6 @@ public class DeliveryServices {
         delivery.setStatus(DeliveryStatus.CANCELLED);
         deliveryRepository.save(delivery);
         return mapToDelivery(delivery);
-    }
-
-    public DeliveryResponseDTO getDeliveryById(Long deliveryId){
-        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(
-                ()-> new DeliveryNotFoundException("Delivery not found for given id")
-        );
-
-        return mapToDelivery(delivery);
-    }
-
-    public List<DeliveryResponseDTO> getAvailableDeliveries(){
-        List<Delivery> deliveryList = deliveryRepository.findByStatus(DeliveryStatus.REQUESTED);
-        List<DeliveryResponseDTO> deliveryResponseDTOList = new ArrayList<>();
-        for(Delivery delivery: deliveryList){
-            deliveryResponseDTOList.add(mapToDelivery(delivery));
-        }
-        return deliveryResponseDTOList;
     }
 
     //DeliveryHistory will be integrated later
