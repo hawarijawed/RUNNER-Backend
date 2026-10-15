@@ -33,7 +33,7 @@ public class UserServices {
         user.setEmail(createUserDTO.getEmail());
         user.setContact(createUserDTO.getContact());
         user.setPasswordHash(createUserDTO.getPassword()); //THIS LINE DESERVE ATTENTION LATER
-        user.setRole(createUserDTO.getRole());
+        //user.setRole(createUserDTO.getRole());
 
         User savedUser = userRepositories.save(user);
 

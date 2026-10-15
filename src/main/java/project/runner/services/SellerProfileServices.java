@@ -41,7 +41,7 @@ public class SellerProfileServices {
         }
 
         //Check if the entity already exists in Sellerprofile
-        if(sellerProfileRepository.existsByUserId(userId)){
+        if(sellerProfileRepository.existsByUsers_Id(userId)){
             throw new InvalidRoleException("Profile already exists in database");
         }
 
@@ -60,7 +60,7 @@ public class SellerProfileServices {
     }
 
     public SellerResponseDTO getSellerByUserId(Long userId){
-        SellerProfile sellerProfile = sellerProfileRepository.findByUserId(userId).orElseThrow(
+        SellerProfile sellerProfile = sellerProfileRepository.findByUsers_Id(userId).orElseThrow(
                 () -> new SellerProfileNotFoundException("Seller not found for given user id")
         );
 
@@ -78,7 +78,7 @@ public class SellerProfileServices {
     @Transactional
     public SellerResponseDTO updateSellerProfile(Long userId, SellerUpdateDTO sellerUpdateDTO){
 
-        SellerProfile sellerProfile = sellerProfileRepository.findByUserId(userId).orElseThrow(
+        SellerProfile sellerProfile = sellerProfileRepository.findByUsers_Id(userId).orElseThrow(
                 ()-> new SellerProfileNotFoundException("Seller profile not found for given user")
         );
 

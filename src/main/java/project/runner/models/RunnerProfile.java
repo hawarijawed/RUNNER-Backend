@@ -2,7 +2,9 @@ package project.runner.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -32,6 +34,6 @@ public class RunnerProfile {
 
     @Column(nullable = false)
     private Long ratingSum = 0L;
-
-    private Date createdAt;
+    @CreatedDate
+    private LocalDateTime createdAt;
 }

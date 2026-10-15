@@ -7,6 +7,6 @@ import project.runner.models.RunnerProfile;
 import java.util.Optional;
 @Repository
 public interface RunnerProfileRepository extends JpaRepository<RunnerProfile, Long> {
-    Optional<RunnerProfile> findByUserId(Long id);
-    boolean existsByUserId(Long id);
+    Optional<RunnerProfile> findByUser_Id(Long id);
+    boolean existsByUser_Id(Long id);
 }

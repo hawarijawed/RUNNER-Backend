@@ -27,7 +27,7 @@ public class DeliveryServices {
     private final RunnerProfileRepository runnerProfileRepository;
 
     public DeliveryResponseDTO createDelivery(Long userId, DeliveryCreateDTO deliveryCreateDTO){
-        SellerProfile sellerProfile = sellerProfileRepository.findByUserId(userId)
+        SellerProfile sellerProfile = sellerProfileRepository.findByUsers_Id(userId)
                 .orElseThrow(()-> new RuntimeException("Seller profile not found"));
 
         Delivery delivery = new Delivery();
@@ -109,7 +109,7 @@ public class DeliveryServices {
     //TOPIC FOR DISCUSSION
     @Transactional
     public DeliveryResponseDTO acceptDeliveryByRunner(Long userId, Long deliveryId){
-        RunnerProfile runnerProfile = runnerProfileRepository.findByUserId(userId).orElseThrow(
+        RunnerProfile runnerProfile = runnerProfileRepository.findByUser_Id(userId).orElseThrow(
                 ()-> new RunnerProfileNotFoundException("Runner Does not exist")
         );
 
@@ -133,7 +133,7 @@ public class DeliveryServices {
     @Transactional
     public DeliveryResponseDTO cancelDelivery(Long userId, Long deliveryId){
         //Verify user
-        SellerProfile sellerProfile = sellerProfileRepository.findByUserId(userId).orElseThrow(
+        SellerProfile sellerProfile = sellerProfileRepository.findByUsers_Id(userId).orElseThrow(
                 () -> new SellerProfileNotFoundException("Seller profile not found for given user id")
         );
         //Verify delivery
@@ -161,7 +161,7 @@ public class DeliveryServices {
     //DeliveryHistory will be integrated later
     @Transactional
     public DeliveryResponseDTO markedAsPickedUp(Long userId, Long deliveryId){
-        RunnerProfile runnerProfile = runnerProfileRepository.findByUserId(userId).orElseThrow(
+        RunnerProfile runnerProfile = runnerProfileRepository.findByUser_Id(userId).orElseThrow(
                 () -> new RunnerProfileNotFoundException("Runner not found for given user id")
         );
 
@@ -184,7 +184,7 @@ public class DeliveryServices {
 
     @Transactional
     public DeliveryResponseDTO markedAsDelivered(Long userId, Long deliveryId){
-        RunnerProfile runnerProfile = runnerProfileRepository.findByUserId(userId).orElseThrow(
+        RunnerProfile runnerProfile = runnerProfileRepository.findByUser_Id(userId).orElseThrow(
                 () -> new RunnerProfileNotFoundException("Runner not found for given user id")
         );
 

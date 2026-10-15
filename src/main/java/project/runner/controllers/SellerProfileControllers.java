@@ -52,5 +52,4 @@ public class SellerProfileControllers {
                 .body(sellerResponseDTO);
     }
 
-
 }

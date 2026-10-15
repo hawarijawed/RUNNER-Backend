@@ -2,6 +2,9 @@ package project.runner.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -19,4 +22,7 @@ public class SellerProfile {
     private String city;
     private Double longitude; // Handled by frontend map
     private Double latitude;  // Handled by frontend map
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 }

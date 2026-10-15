@@ -21,9 +21,8 @@ public class CreateUserDTO {
     private String contact;
     @NotBlank
     @NotNull
-    @Min(6)
+    @Size(min = 6, message = "Password must contain at least 6 characters")
     private String password;
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Roles role;
 }

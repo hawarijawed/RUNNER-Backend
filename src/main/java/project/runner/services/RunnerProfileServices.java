@@ -38,7 +38,7 @@ public class RunnerProfileServices {
                 throw new InvalidRoleException("User is already assigned with other role.");
             }
         }
-        if(runnerProfileRepository.existsByUserId(userId)){
+        if(runnerProfileRepository.existsByUser_Id(userId)){
             throw new RunnerProfileAlreadyExistsException("Runner already exists");
         }
 
@@ -70,7 +70,7 @@ public class RunnerProfileServices {
     }
 
     public RunnerProfile getByUserId(Long userId){
-        return runnerProfileRepository.findByUserId(userId)
+        return runnerProfileRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new RunnerProfileNotFoundException("Runner profile not found for given user"));
     }
 }
