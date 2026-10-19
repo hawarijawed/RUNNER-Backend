@@ -25,7 +25,8 @@ public class DeliveryServices {
     private final DeliveryRepository deliveryRepository;
     private final SellerProfileRepository sellerProfileRepository;
     private final RunnerProfileRepository runnerProfileRepository;
-
+    private final DeliveryHistoryServices deliveryHistoryServices;
+    @Transactional
     public DeliveryResponseDTO createDelivery(Long userId, DeliveryCreateDTO deliveryCreateDTO){
         SellerProfile sellerProfile = sellerProfileRepository.findByUsers_Id(userId)
                 .orElseThrow(()-> new RuntimeException("Seller profile not found"));
@@ -43,6 +44,7 @@ public class DeliveryServices {
         delivery.setDropoffLatitude(deliveryCreateDTO.getDropoffLatitude());
         delivery.setDropoffLongitude(deliveryCreateDTO.getDropoffLongitude());
         deliveryRepository.save(delivery);
+        deliveryHistoryServices.recordDeliveryStatus(delivery,null, DeliveryStatus.REQUESTED, sellerProfile.getUsers());
         return mapToDelivery(delivery);
     }
 
@@ -122,10 +124,11 @@ public class DeliveryServices {
             throw new DeliveryAlreadyAcceptedException("Delivery already accepted");
         }
 
+        DeliveryStatus prevStatus = delivery.getStatus();
         delivery.setStatus(DeliveryStatus.MATCHED);
         delivery.setRunner(runnerProfile);
+        deliveryHistoryServices.recordDeliveryStatus(delivery, prevStatus, DeliveryStatus.MATCHED, runnerProfile.getUser());
         deliveryRepository.saveAndFlush(delivery);
-
         return mapToDelivery(delivery);
     }
 
@@ -152,8 +155,9 @@ public class DeliveryServices {
                     "Delivery cannot be cancelled in its current status"
             );
         }
-
+        DeliveryStatus prevStatus = delivery.getStatus();
         delivery.setStatus(DeliveryStatus.CANCELLED);
+        deliveryHistoryServices.recordDeliveryStatus(delivery, prevStatus, DeliveryStatus.CANCELLED, sellerProfile.getUsers());
         deliveryRepository.save(delivery);
         return mapToDelivery(delivery);
     }
@@ -176,8 +180,9 @@ public class DeliveryServices {
         if(delivery.getStatus() != DeliveryStatus.MATCHED){
             throw new InvalidDeliveryStatusException("Only Matched deliveries can be marked as Picked up");
         }
-
+        DeliveryStatus prevStatus = delivery.getStatus();
         delivery.setStatus(DeliveryStatus.PICKED_UP);
+        deliveryHistoryServices.recordDeliveryStatus(delivery, prevStatus, DeliveryStatus.PICKED_UP, runnerProfile.getUser());
         deliveryRepository.save(delivery);
         return mapToDelivery(delivery);
     }
@@ -202,7 +207,9 @@ public class DeliveryServices {
             throw new InvalidDeliveryStatusException("Only deliveries with status = PICKED UP can be marked as DELIVERED");
         }
 
+        DeliveryStatus prevStatus = delivery.getStatus();
         delivery.setStatus(DeliveryStatus.DELIVERED);
+        deliveryHistoryServices.recordDeliveryStatus(delivery, prevStatus, DeliveryStatus.DELIVERED, runnerProfile.getUser());
         deliveryRepository.save(delivery);
 
         runnerProfile.setTotalDeliveries(runnerProfile.getTotalDeliveries() + 1);
