@@ -3,7 +3,7 @@ package project.runner.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.runner.DTOs.RunnerProfileResponse;
+import project.runner.DTOs.RunnerResponseDTO;
 import project.runner.exceptions.InvalidRoleException;
 import project.runner.exceptions.RunnerProfileAlreadyExistsException;
 import project.runner.exceptions.RunnerProfileNotFoundException;
@@ -21,7 +21,7 @@ public class RunnerProfileServices {
     private final UserRepositories userRepositories;
 
     @Transactional
-    public RunnerProfileResponse createRunnerProfile(Long userId){
+    public RunnerResponseDTO createRunnerProfile(Long userId){
         //Get the user first
         User user = userRepositories.findById(userId)
                 .orElseThrow(
@@ -55,22 +55,32 @@ public class RunnerProfileServices {
 
         runnerProfileRepository.save(runnerProfile);
 
-        RunnerProfileResponse response = new RunnerProfileResponse();
-        response.setOnline(false); //Runner is online only when he/she ready to receive deliveries
-        response.setRating(0.0);
-        response.setTotalDeliveries(0L);
-
-        return response;
+        return mapToRunner(runnerProfile);
     }
 
-    public RunnerProfile getById(Long id){
-        return runnerProfileRepository.findById(id)
+    public RunnerResponseDTO getById(Long id){
+        RunnerProfile runnerProfile = runnerProfileRepository.findById(id)
                 .orElseThrow(() ->  new RunnerProfileNotFoundException("Runner profile not found")
                 );
+        return mapToRunner(runnerProfile);
     }
 
-    public RunnerProfile getByUserId(Long userId){
-        return runnerProfileRepository.findByUser_Id(userId)
+    public RunnerResponseDTO getByUserId(Long userId){
+        RunnerProfile runnerProfile = runnerProfileRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new RunnerProfileNotFoundException("Runner profile not found for given user"));
+        return mapToRunner(runnerProfile);
+    }
+
+    public RunnerResponseDTO mapToRunner(RunnerProfile runnerProfile){
+        RunnerResponseDTO responseDTO = new RunnerResponseDTO();
+        responseDTO.setName(runnerProfile.getUser().getName());
+        responseDTO.setContact(runnerProfile.getUser().getContact());
+        responseDTO.setTotalDeliveries(runnerProfile.getTotalDeliveries());
+        String avg_rating = String.format("%.2f",
+                (double) runnerProfile.getRatingSum() / runnerProfile.getRatingCount());
+        responseDTO.setRating(avg_rating);
+        responseDTO.setOnline(runnerProfile.isOnline());
+
+        return responseDTO;
     }
 }

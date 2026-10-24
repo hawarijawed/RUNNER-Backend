@@ -75,7 +75,7 @@ public class RatingServices {
     @Transactional(readOnly = true)
     public RatingResponseDTO getRatingByDeliveryId(Long deliveryId){
         Rating rating = ratingRepository.findByDelivery_Id(deliveryId).orElseThrow(
-                () -> new RatingNotFoundException("This delivery has no rating")
+                () -> new RatingNotFoundException("Either this delivery has no rating or delivery doesn't exist")
         );
         return mapToRating(rating);
     }
