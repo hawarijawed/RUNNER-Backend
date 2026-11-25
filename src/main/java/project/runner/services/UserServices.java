@@ -1,5 +1,7 @@
 package project.runner.services;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.runner.DTOs.CreateUserDTO;
 import project.runner.DTOs.UserResponse;
@@ -16,9 +18,10 @@ import java.util.Optional;
 public class UserServices {
 
     private final UserRepositories userRepositories;
-
-    public UserServices(UserRepositories userRepositories){
+    private final PasswordEncoder passwordEncoder;
+    public UserServices(UserRepositories userRepositories, PasswordEncoder passwordEncoder){
         this.userRepositories = userRepositories;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //Create new user
@@ -32,7 +35,7 @@ public class UserServices {
         user.setName(createUserDTO.getName());
         user.setEmail(createUserDTO.getEmail());
         user.setContact(createUserDTO.getContact());
-        user.setPasswordHash(createUserDTO.getPassword()); //THIS LINE DESERVE ATTENTION LATER
+        user.setPasswordHash(passwordEncoder.encode(createUserDTO.getPassword())); //THIS LINE DESERVE ATTENTION LATER
         //user.setRole(createUserDTO.getRole());
 
         User savedUser = userRepositories.save(user);

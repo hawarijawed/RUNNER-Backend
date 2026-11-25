@@ -1,5 +1,7 @@
 package project.runner;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Encoders;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
